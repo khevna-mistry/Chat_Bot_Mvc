@@ -1,0 +1,145 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="chat-title">Chat with Us</h2>
+
+<div id="chat-container">
+    <div id="chat-box" class="chat-box">
+        <!-- Messages will appear here -->
+    </div>
+    <div class="input-container">
+        <input type="text" id="user-message" class="chat-input" placeholder="Type your message..." />
+        <button id="send-button" class="send-button">Send</button>
+    </div>
+</div>
+
+<style>
+    /* Styling for the chat interface */
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f7f7f7;
+        color: #333;
+    }
+
+    .chat-title {
+        text-align: center;
+        color: #333;
+        font-size: 28px;
+        margin-top: 50px;
+        font-weight: bold;
+    }
+
+    #chat-container {
+        width: 100%;
+        max-width: 500px;
+        margin: 30px auto;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+    }
+
+    #chat-box {
+        max-height: 400px;
+        overflow-y: auto;
+        margin-bottom: 20px;
+        padding: 10px;
+        background-color: #f0f0f0;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+    }
+
+    #chat-box div {
+        margin-bottom: 10px;
+    }
+
+    .user-message {
+        text-align: left;
+        background-color: #e0f7fa;
+        padding: 8px 12px;
+        border-radius: 15px;
+        max-width: 70%;
+        margin-left: 10px;
+    }
+
+    .bot-response {
+        text-align: right;
+        background-color: #d1c4e9;
+        padding: 8px 12px;
+        border-radius: 15px;
+        max-width: 70%;
+        margin-right: 10px;
+    }
+
+    .input-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .chat-input {
+        width: 80%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 16px;
+        outline: none;
+    }
+
+    .chat-input:focus {
+        border-color: #5e35b1;
+    }
+
+    .send-button {
+        background-color: #5e35b1;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .send-button:hover {
+        background-color: #512da8;
+    }
+
+    .send-button:focus {
+        outline: none;
+    }
+</style>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#send-button").click(function () {
+            var userMessage = $("#user-message").val();
+            if (userMessage) {
+                // Append user's message to chat box
+                $("#chat-box").append("<div class='user-message'>User: " + userMessage + "</div>");
+
+                $.ajax({
+                    url: '@Url.Action("GetChatResponse", "Chat")',
+                    type: 'POST',
+                    data: { userMessage: userMessage },
+                    success: function (response) {
+                        // Append bot's response to chat box
+                        $("#chat-box").append("<div class='bot-response'>Bot: " + response.reply + "</div>");
+                        // Scroll to the bottom of the chat box
+                        $('#chat-box').scrollTop($('#chat-box')[0].scrollHeight);
+                        // Clear input field
+                        $("#user-message").val("");
+                    },
+                    error: function () {
+                        alert("Error communicating with the chatbot.");
+                    }
+                });
+            }
+        });
+
+        // Scroll chat box to the bottom when new message is added
+        $('#chat-box').scrollTop($('#chat-box')[0].scrollHeight);
+    });
+</script>
