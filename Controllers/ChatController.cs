@@ -16,7 +16,6 @@ namespace Chat_Bot_Mvc.Controllers
         {
             return View();
         }
-
         [HttpPost]
         public async Task<IActionResult> GetChatResponse(string userMessage)
         {
